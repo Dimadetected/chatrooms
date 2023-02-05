@@ -1,0 +1,46 @@
+<div id="auth">
+    <label for="name" >Введи свое имя</label> <br>
+    <input id="name" type="text" /> <br>
+    <button onclick="startConn()">Send</button>
+</div>
+
+<div id="text">
+    <label for="input">Введи текст</label> <br>
+    <input id="input" type="text" />
+    <button onclick="send()">Send</button>
+    <pre id="output"></pre>
+</div>
+<script>
+    var socket
+    var input = document.getElementById("input");
+
+    var auth = document.getElementById("auth");
+    var text = document.getElementById("text");
+    text.style.display = 'none'
+
+
+   function startConn() {
+       var output = document.getElementById("output");
+       var name = document.getElementById("name");
+
+       text.style.display = 'block'
+       auth.style.display = 'none'
+
+       socket = new WebSocket("ws://192.168.1.109:8080/echo?name="+ name.value);
+
+       socket.onopen = function () {
+           output.innerHTML += "Status: Connected\n";
+       };
+
+       socket.onmessage = function (e) {
+           let data = JSON.parse(e.data)
+           output.innerHTML += data.name + ": " +  data.data + "\n";
+       };
+
+
+   }
+   function send() {
+       socket.send(input.value);
+       input.value = "";
+   }
+</script>
